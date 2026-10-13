@@ -18,7 +18,7 @@ The gateway binds only to `127.0.0.1:8088`. Open a local tunnel:
 ssh -N -L 8088:127.0.0.1:8088 cg-hermes
 ```
 
-Then visit `http://localhost:8088/landlord`. Use the verified CG host; SSH alias names alone do not prove company identity. There is no public website or database port.
+Then visit `http://3nity.localhost:8088/landlord`. Use the verified CG host; SSH alias names alone do not prove company identity. There is no public website or database port.
 
 For private MCP stdio access, launch through SSH with an agent/client that supports a subprocess transport:
 
