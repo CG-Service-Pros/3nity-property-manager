@@ -37,7 +37,7 @@ assert status==200 and isinstance(before,list)
 for method,path in [('GET','/realms'),('POST','/properties'),('PATCH','/rents/payment/invalid/202610'),('DELETE','/properties/invalid'),('POST','/emails'),('POST','/templates')]:
     assert call(method,'/api/v2'+path,{},read_token,org)[0]==403,(method,path)
 status,realm=call('POST','/api/v2/realms',{
-    'name':'SYNTHETIC ACCEPTANCE '+str(uuid.uuid4()),'currency':'USD','locale':'en-US',
+    'name':'SYNTHETIC ACCEPTANCE '+str(uuid.uuid4()),'currency':'USD','locale':'en',
     'members':[{'email':credentials['email'],'name':'Test operator','role':'administrator','registered':True}],
     'applications':[]
 },admin)
