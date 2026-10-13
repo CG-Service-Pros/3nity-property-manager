@@ -2,6 +2,8 @@
 
 Reviewed October 13, 2026. The requirement is a small rental portfolio plus seller-finance notes, self-hosted on an existing Linux VPS, with agent access and owner-controlled notices.
 
+Owner clarification: internal use only, local database, and a preference for a simple Docker container. The selected version has a local MongoDB database but ships multiple containers. The recommendation is conditional on acceptable packaging effort; it does not meet a literal single-container requirement out of the box. See [deployment.md](deployment.md).
+
 ## Recommendation
 
 Use the last MIT-licensed MicroRealEstate revision as the rental development base. It already models properties, tenants, leases, rent payments, documents, organizations, and application credentials. Add a distinct loan-servicing module and a narrowly scoped MCP interface. This is the best fit among the evaluated options for a small portfolio that already uses QuickBooks and wants to own the code. It is not an off-the-shelf solution for both rentals and notes.

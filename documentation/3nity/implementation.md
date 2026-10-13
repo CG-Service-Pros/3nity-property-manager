@@ -4,6 +4,8 @@ Status: PROPOSED. The selection and fork are complete; the work below is not imp
 
 ## 1. Harden and prove the rental baseline
 
+- Meet the owner's local-database and simple-Docker deployment requirement. Resolve and document literal single-container packaging versus a single Compose project before implementation; do not imply that upstream already supplies an all-in-one image. Persist data independently of container recreation.
+
 - Retain the MIT source revision and copyright notice. Build app images from fork source with commit/digest provenance; never pull current upstream app images as `latest`.
 - Upgrade unsupported runtime/dependencies after reviewing and testing license-compatible changes. Scan container and application dependencies; fix or explicitly disposition material findings before real data.
 - Add a dedicated local/staging environment, generated secrets, disabled mail transport, closed registration after authorized provisioning, limited network bindings, health checks and tested backups.

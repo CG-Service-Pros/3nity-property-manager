@@ -2,6 +2,14 @@
 
 Status: PROPOSED, not executed. The VPS was inspected read-only on October 13, 2026. No app containers, ports, credentials, tenant accounts or production records were created for this fork.
 
+## Owner's deployment preference
+
+October 13 clarification: this application is for internal management of the owner's properties. All application data must be stored locally on the VPS, and the owner prefers a simple Docker container installation. No managed/cloud database is required by the selected baseline.
+
+MicroRealEstate currently uses local MongoDB and Redis plus multiple application services. Its stock Compose manifest is a multi-container stack, not an all-in-one image. A single Compose project provides one install/start/stop interface while preserving separate service lifecycles. A literal one-container package would require a custom image, process supervision, localhost service configuration, graceful database shutdown, health checks and backup/restore validation. That packaging is not implemented in this fork. Do not describe a Compose stack as one container or substitute it silently for the stated preference.
+
+Required persistence: keep MongoDB files, relevant Redis state, documents and backups in persistent volumes or protected host directories outside the container's writable layer. Recreating or updating a container must preserve records. Revisit the software choice if achieving a tested single-container package adds more maintenance than the rental foundation saves.
+
 ## Host findings
 
 The verified CG host is `srv1985448`. At inspection it had approximately 7.9 GiB reported RAM, 2.7 GiB available, no swap and approximately 64 GiB disk free. Existing services include Hermes agents, Paperclip, Traefik and a webhook receiver. Resource availability is transient; repeat the check before deployment. No application footprint or load test has been performed.
