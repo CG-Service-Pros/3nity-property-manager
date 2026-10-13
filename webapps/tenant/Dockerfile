@@ -16,6 +16,7 @@ FROM base AS build
 WORKDIR /usr/app
 ENV BASE_PATH=/__MRE_BASE_PATH__
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_OPTIONS=--max-old-space-size=768
 COPY --from=deps /usr/app ./
 COPY types types
 COPY webapps/commonui/scripts webapps/commonui/scripts
