@@ -17,7 +17,7 @@ if (!await Collections.Account.findOne({email})) {
   await Collections.Account.create({firstname:'3nity',lastname:'Operator',email,password:process.env.OPERATOR_PASSWORD});
 }
 const realm = new Collections.Realm({
-  name:'3nity Ventures',currency:'USD',locale:'en-US',
+  name:'3nity Ventures',currency:'USD',locale:'en',
   members:[{email,name:'3nity Operator',role:'administrator',registered:true}],
   isCompany:true, companyInfo:{name:'3nity Ventures'}, applications:[]
 });
