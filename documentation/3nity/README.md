@@ -1,6 +1,6 @@
 # 3nity Ventures development fork
 
-This folder defines the rental-management and seller-finance servicing extension to MicroRealEstate. It is a development plan, not evidence of an installed application, implemented MCP server, or live loan servicing. No tenant, borrower, bank, contract, or payment data belongs in this public repository.
+This folder defines the rental-management and seller-finance servicing extension to MicroRealEstate. [Runtime status](runtime-status.md) records the installed private rental staging and read-only MCP. The loan and notice specifications remain future work. No tenant, borrower, bank, contract, or payment data belongs in this public repository.
 
 ## Current state
 
@@ -9,7 +9,7 @@ This folder defines the rental-management and seller-finance servicing extension
 - Fork default branch: `main`, reset to this same MIT commit.
 - Newer upstream `main` uses the Sustainable Use License and must not be merged into this fork without a separate licensing decision.
 - GitHub Actions are disabled until inherited workflows have been reviewed.
-- This initial change adds documentation and development guardrails only. No runtime code changes.
+- Development now includes a private Compose deployment, runtime/dependency compatibility fixes, API read-only enforcement, a stdio MCP adapter, bootstrap and acceptance checks. Default `main` remains the original MIT baseline; feature work is in a draft pull request.
 
 ## Documents
 

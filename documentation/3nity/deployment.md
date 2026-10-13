@@ -1,6 +1,6 @@
 # CG VPS deployment plan
 
-Status: PROPOSED, not executed. The VPS was inspected read-only on October 13, 2026. No app containers, ports, credentials, tenant accounts or production records were created for this fork.
+Status: private staging deployed October 13, 2026, after Oscar authorized implementation and VPS installation. See [runtime-status.md](runtime-status.md) and [deploy/README.md](../../deploy/README.md). Earlier host findings below were the preparation snapshot. No real portfolio records have been imported.
 
 ## Owner's deployment preference
 
@@ -34,4 +34,4 @@ The local SSH alias `cg-hermes` reached the verified CG host. Another alias name
 5. Check landlord UI, service health, private network bindings, account access, ledger integrity and existing CG services.
 6. Retain the prior images and restore point. Roll back app code together with compatible schema/data state; do not assume downgrading an image reverses a database migration.
 
-The initial change in this fork is documentation only. It does not supply a validated deployment manifest or a production-ready servicing module. Resolve the gates in [implementation.md](implementation.md) before deploying real financial records.
+The deployment manifest is implemented and tested for staging. It does not supply a production-ready servicing module. Resolve the remaining gates in [implementation.md](implementation.md) before importing real financial records or enabling collection workflows.

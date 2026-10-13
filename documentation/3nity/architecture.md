@@ -1,6 +1,6 @@
 # Extension architecture
 
-Status: PROPOSED. These interfaces and collections are specifications, not implemented functionality.
+Status: mixed implementation/specification. Five rental MCP read tools and API-enforced reader access are implemented. Note collections, loan behavior, writes, followup/approval queues and notice delivery below remain specifications. See [runtime-status.md](runtime-status.md) for verified behavior.
 
 ## Runtime layout
 

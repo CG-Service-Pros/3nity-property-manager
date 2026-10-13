@@ -1,6 +1,6 @@
 # Implementation sequence
 
-Status: PROPOSED. The selection and fork are complete; the work below is not implemented. No live records have been migrated.
+Status: phased implementation started. Private rental staging, API read-only controls and five MCP read tools are verified; see [runtime-status.md](runtime-status.md). Production hardening, write/approval workflows and seller-finance servicing remain open. No live records have been migrated.
 
 ## 1. Harden and prove the rental baseline
 

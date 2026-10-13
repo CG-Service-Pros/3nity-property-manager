@@ -27,7 +27,7 @@ def snapshot(container, authenticated=True):
     digest=hashlib.sha256(json.dumps(data,sort_keys=True,separators=(',',':')).encode()).hexdigest()
     return digest,{name:len(rows) for name,rows in data.items()}
 mongo=run(compose+['ps','-q','mongo']).decode().strip()
-guard='print(db.properties.countDocuments({realmId:'+json.dumps(env['MCP_ORGANIZATION_ID'])+'})+db.tenants.countDocuments({realmId:'+json.dumps(env['MCP_ORGANIZATION_ID'])+'})+db.notes.countDocuments({realmId:'+json.dumps(env['MCP_ORGANIZATION_ID'])+'}));'
+guard='print(db.properties.countDocuments({realmId:'+json.dumps(env['MCP_ORGANIZATION_ID'])+'})+db.occupants.countDocuments({realmId:'+json.dumps(env['MCP_ORGANIZATION_ID'])+'})+db.notes.countDocuments({realmId:'+json.dumps(env['MCP_ORGANIZATION_ID'])+'}));'
 if int(run(live_command(mongo,guard)).decode().strip()) != 0:
     raise SystemExit('Refusing disruption: the primary organization is no longer an empty staging fixture.')
 before,counts=snapshot(mongo)
