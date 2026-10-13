@@ -9,7 +9,7 @@ This folder defines the rental-management and seller-finance servicing extension
 - Fork default branch: `main`, reset to this same MIT commit.
 - Newer upstream `main` uses the Sustainable Use License and must not be merged into this fork without a separate licensing decision.
 - GitHub Actions are disabled until inherited workflows have been reviewed.
-- Development now includes a private Compose deployment, runtime/dependency compatibility fixes, API read-only enforcement, a stdio MCP adapter, bootstrap and acceptance checks. Default `main` remains the original MIT baseline; feature work is in a draft pull request.
+- Development now includes a private Compose deployment, runtime/dependency compatibility fixes, API read-only enforcement, a stdio MCP adapter, bootstrap and acceptance checks. Default `main` remains the original MIT baseline; feature work is in a review pull request.
 
 ## Documents
 
