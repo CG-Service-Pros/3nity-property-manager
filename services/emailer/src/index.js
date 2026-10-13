@@ -4,6 +4,7 @@ import fs from 'fs';
 import i18n from 'i18n';
 import path from 'path';
 import routes from './routes.js';
+import { emailSendingEnabled } from './sendingpolicy.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -32,9 +33,7 @@ async function Main() {
     service = Service.getInstance(
       new EnvironmentConfig({
         PORT: Number(process.env.PORT || 8083),
-        ALLOW_SENDING_EMAILS:
-          process.env.NODE_ENV === 'production' ||
-          process.env.ALLOW_SENDING_EMAILS === 'true',
+        ALLOW_SENDING_EMAILS: emailSendingEnabled(process.env),
         APP_NAME: process.env.APP_NAME || 'MicroRealEstate',
         LANDLORD_APP_URL:
           process.env.LANDLORD_APP_URL || 'http://localhost:8080/landlord',

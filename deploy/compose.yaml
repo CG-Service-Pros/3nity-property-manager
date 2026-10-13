@@ -1,0 +1,187 @@
+name: trinity-staging
+
+x-environment: &environment
+  NODE_ENV: production
+  LOGGER_LEVEL: info
+  NODE_OPTIONS: --max-old-space-size=192
+  APP_NAME: 3nity Ventures
+  MONGO_URL: mongodb://root:${MONGO_PASSWORD:?generate deploy/.env}@mongo:27017/trinity?authSource=admin
+  REDIS_URL: redis://redis:6379
+  REDIS_PASSWORD: ${REDIS_PASSWORD:?generate deploy/.env}
+  ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET:?generate deploy/.env}
+  REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET:?generate deploy/.env}
+  RESET_TOKEN_SECRET: ${RESET_TOKEN_SECRET:?generate deploy/.env}
+  APPCREDZ_TOKEN_SECRET: ${APPCREDZ_TOKEN_SECRET:?generate deploy/.env}
+  CIPHER_KEY: ${CIPHER_KEY:?generate deploy/.env}
+  CIPHER_IV_KEY: ${CIPHER_IV_KEY:?generate deploy/.env}
+  APP_DOMAIN: localhost
+  APP_PROTOCOL: http
+  EMAILER_URL: http://emailer:8400/emailer
+  PDFGENERATOR_URL: http://pdfgenerator:8300/pdfgenerator
+  DEMO_MODE: 'false'
+  RESTORE_DB: 'false'
+
+x-health: &health
+  test: [CMD, node, -e, "fetch('http://127.0.0.1:'+process.env.PORT+'/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+  interval: 30s
+  timeout: 10s
+  retries: 5
+  start_period: 90s
+
+x-backend: &backend
+  image: 3nity/backend:${RELEASE_TAG:-staging}
+  build:
+    context: ..
+    dockerfile: deploy/backend.Dockerfile
+  restart: unless-stopped
+  init: true
+  networks: [private]
+  healthcheck: *health
+  mem_limit: 192m
+  cpus: 1.0
+  security_opt: [no-new-privileges:true]
+  depends_on:
+    mongo: {condition: service_healthy}
+    redis: {condition: service_healthy}
+  logging:
+    driver: json-file
+    options: {max-size: 5m, max-file: '2'}
+
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:?generate deploy/.env}
+    command: [mongod, --wiredTigerCacheSizeGB, '0.25']
+    volumes: [mongo-data:/data/db]
+    networks: [private]
+    mem_limit: 512m
+    healthcheck:
+      test: [CMD, mongosh, --quiet, --eval, "quit(db.adminCommand({ping:1}).ok ? 0 : 1)"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+  redis:
+    image: redis:7.4-bookworm
+    restart: unless-stopped
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?generate deploy/.env}
+    command: [sh, -c, 'exec redis-server --requirepass "$$REDIS_PASSWORD" --appendonly yes --maxmemory 32mb --maxmemory-policy noeviction']
+    volumes: [redis-data:/data]
+    networks: [private]
+    mem_limit: 64m
+    healthcheck:
+      test: [CMD-SHELL, 'REDISCLI_AUTH="$$REDIS_PASSWORD" redis-cli ping | grep -q PONG']
+      interval: 20s
+      timeout: 5s
+      retries: 5
+  api:
+    <<: *backend
+    environment: {<<: *environment, PORT: '8200'}
+    command: [node, services/api/src/index.js]
+    volumes: [backups:/usr/app/backup]
+  authenticator:
+    <<: *backend
+    environment:
+      <<: *environment
+      PORT: '8000'
+      SIGNUP: 'false'
+    command: [node, services/authenticator/src/index.js]
+  tenantapi:
+    <<: *backend
+    environment: {<<: *environment, PORT: '8250'}
+    command: [node, services/tenantapi/dist/index.js]
+  emailer:
+    <<: *backend
+    environment:
+      <<: *environment
+      PORT: '8400'
+      ALLOW_SENDING_EMAILS: 'false'
+      LANDLORD_APP_URL: http://localhost:8088/landlord
+      TENANT_APP_URL: http://localhost:8088/tenant
+    command: [node, services/emailer/src/index.js]
+  pdfgenerator:
+    <<: *backend
+    mem_limit: 512m
+    environment: {<<: *environment, PORT: '8300', UPLOAD_MAX_SIZE: '20000000'}
+    command: [node, services/pdfgenerator/src/index.js]
+    volumes:
+      - documents:/usr/app/services/pdfgenerator/pdf_documents
+      - uploads:/usr/app/services/pdfgenerator/uploads
+      - templates:/usr/app/services/pdfgenerator/templates
+  gateway:
+    <<: *backend
+    mem_limit: 128m
+    ports: ['127.0.0.1:8088:8080']
+    environment:
+      <<: *environment
+      PORT: '8080'
+      EXPOSE_FRONTENDS: 'true'
+      AUTHENTICATOR_URL: http://authenticator:8000
+      API_URL: http://api:8200/api/v2
+      TENANTAPI_URL: http://tenantapi:8250/tenantapi
+      LANDLORD_FRONTEND_URL: http://landlord:8180
+      TENANT_FRONTEND_URL: http://tenant:8190
+      LANDLORD_BASE_PATH: /landlord
+      TENANT_BASE_PATH: /tenant
+      CORS_ENABLED: 'false'
+    command: [node, services/gateway/dist/index.js]
+    depends_on:
+      api: {condition: service_healthy}
+      authenticator: {condition: service_healthy}
+      tenantapi: {condition: service_healthy}
+      emailer: {condition: service_healthy}
+      pdfgenerator: {condition: service_healthy}
+  landlord:
+    image: 3nity/landlord:${RELEASE_TAG:-staging}
+    build: {context: .., dockerfile: webapps/landlord/Dockerfile}
+    restart: unless-stopped
+    init: true
+    networks: [private]
+    mem_limit: 384m
+    healthcheck:
+      <<: *health
+      test: [CMD, /nodejs/bin/node, -e, "fetch('http://127.0.0.1:8180/landlord/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+    environment:
+      PORT: '8180'
+      HOSTNAME: 0.0.0.0
+      NODE_ENV: production
+      BASE_PATH: /landlord
+      APP_NAME: 3nity Ventures
+      SIGNUP: 'false'
+      DEMO_MODE: 'false'
+      GATEWAY_URL: http://localhost:8088
+      DOCKER_GATEWAY_URL: http://gateway:8080
+      CORS_ENABLED: 'false'
+  tenant:
+    image: 3nity/tenant:${RELEASE_TAG:-staging}
+    build: {context: .., dockerfile: webapps/tenant/Dockerfile}
+    restart: unless-stopped
+    init: true
+    networks: [private]
+    mem_limit: 256m
+    healthcheck:
+      <<: *health
+      test: [CMD, /nodejs/bin/node, -e, "fetch('http://127.0.0.1:8190/tenant/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+    environment:
+      PORT: '8190'
+      HOSTNAME: 0.0.0.0
+      NODE_ENV: production
+      BASE_PATH: /tenant
+      APP_NAME: 3nity Ventures
+      DEMO_MODE: 'false'
+      GATEWAY_URL: http://localhost:8088
+      DOCKER_GATEWAY_URL: http://gateway:8080
+      CORS_ENABLED: 'false'
+
+networks:
+  private: {internal: true}
+volumes:
+  mongo-data:
+  redis-data:
+  documents:
+  uploads:
+  templates:
+  backups:

@@ -22,3 +22,5 @@ docker-compose*
 dev.Dockerfile
 Dockerfile
 LICENSE
+
+!LICENSE

@@ -1,4 +1,4 @@
-FROM node:20-bookworm-slim AS base
+FROM node:22-bookworm-slim AS base
 
 FROM base AS deps
 WORKDIR /usr/app
@@ -35,7 +35,7 @@ RUN yarn workspace @microrealestate/types run build && \
 RUN chown -R 1000 /usr/app/webapps/tenant/.next && \
     chown -R 1000 /usr/app/webapps/tenant/public
 
-FROM gcr.io/distroless/nodejs20-debian12
+FROM gcr.io/distroless/nodejs22-debian12
 WORKDIR /usr/app
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=build /usr/app/webapps/tenant/public ./public

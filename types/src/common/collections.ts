@@ -1,4 +1,4 @@
-import { LeaseTimeRange, Locale, PaymentMethod, UserRole } from './index.js';
+import { ConnectionRole, LeaseTimeRange, Locale, PaymentMethod, UserRole } from './index.js';
 
 export type MongooseDocument<T> = {
   __v: number;
@@ -37,7 +37,7 @@ export namespace CollectionTypes {
     }[];
     applications: {
       name: string;
-      role: UserRole;
+      role: Exclude<ConnectionRole, 'tenant'>;
       clientId: string;
       clientSecret: string;
       createdDate: Date;
