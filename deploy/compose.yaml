@@ -48,6 +48,21 @@ x-backend: &backend
     options: {max-size: 5m, max-file: '2'}
 
 services:
+  mcp:
+    profiles: [mcp]
+    image: 3nity/mcp:${RELEASE_TAG:-staging}
+    build: {context: ../integrations/mcp, dockerfile: Dockerfile}
+    stdin_open: true
+    init: true
+    networks: [private]
+    mem_limit: 128m
+    environment:
+      MRE_URL: http://gateway:8080
+      MCP_CLIENT_ID: ${MCP_CLIENT_ID:-}
+      MCP_CLIENT_SECRET: ${MCP_CLIENT_SECRET:-}
+      MCP_ORGANIZATION_ID: ${MCP_ORGANIZATION_ID:-}
+    depends_on:
+      gateway: {condition: service_healthy}
   mongo:
     image: mongo:7
     restart: unless-stopped
