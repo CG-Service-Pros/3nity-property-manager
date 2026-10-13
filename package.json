@@ -65,8 +65,7 @@
     "esbuild": "0.25.0",
     "nanoid": "3.3.8",
     "path-to-regexp": "0.1.12",
-    "tar-fs": "3.0.9",
-    "typescript": "5.5.4"
+    "tar-fs": "3.0.9"
   },
   "engines": {
     "node": ">=22 <23"
