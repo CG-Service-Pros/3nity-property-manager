@@ -4,7 +4,8 @@ const nextTranslate = require('next-translate-plugin');
 module.exports = nextTranslate({
   output: 'standalone',
   experimental: {
-    externalDir: true
+    externalDir: true,
+    cpus: 1
   },
   webpack: (
     config /*,
@@ -22,5 +23,5 @@ module.exports = nextTranslate({
   },
   // base path cannot be set at runtime: https://github.com/vercel/next.js/discussions/41769
   basePath: process.env.BASE_PATH || '',
-  productionBrowserSourceMaps: true
+  productionBrowserSourceMaps: false
 });

@@ -14,6 +14,7 @@ import {
 import logger from './logger.js';
 import Realm from '../collections/realm.js';
 import ServiceError from './serviceerror.js';
+import { isReadOnlyRequestAllowed } from './readOnlyPolicy.js';
 
 type ErrorBodyType = {
   status: number;
@@ -189,6 +190,18 @@ export function checkOrganization() {
           'checkOrganization: Invalid request received: neither user nor application'
         );
         return res.sendStatus(500);
+    }
+
+    // Enforce a machine reader's permissions before the /realms early return.
+    // Resolve from live stored credentials so role revocation is immediate.
+    if (req.user.type === 'application') {
+      const clientId = req.user.clientId;
+      const role = req.realms[0]?.applications?.find(
+        (app) => app.clientId === clientId
+      )?.role;
+      if (role === 'read_only' && !isReadOnlyRequestAllowed(req.method, req.path)) {
+        return res.sendStatus(403);
+      }
     }
 
     // skip organization checks when fetching them

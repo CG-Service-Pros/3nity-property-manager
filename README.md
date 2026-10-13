@@ -1,3 +1,7 @@
+# 3nity Ventures property manager — development fork
+
+This fork starts at MicroRealEstate's last MIT-licensed revision. Private rental staging and a read-only MCP adapter are implemented on the development branch. Seller-finance servicing, MCP writes, notices and real data import remain future work. Start with the [current status](documentation/3nity/runtime-status.md) and [deployment instructions](deploy/README.md). Newer upstream `main` uses a restricted license and must not be merged automatically. No real portfolio or payment data belongs in this public repository.
+
 # MicroRealEstate
 
 [![Continuous Integration](https://github.com/microrealestate/microrealestate/actions/workflows/ci.yml/badge.svg?event=push)](https://github.com/microrealestate/microrealestate/actions/workflows/ci.yml)
